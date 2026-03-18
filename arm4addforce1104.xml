@@ -1,0 +1,152 @@
+<mujoco model="octopus_arm">
+
+    <!-- ===== Compiler Settings ===== -->
+    <compiler angle="radian" coordinate="local" />  <!-- Use radians and local coordinates -->
+
+    <!-- ===== Global Simulation Options ===== -->
+    <option timestep="0.001" gravity="0 0 0" integrator="implicitfast" />  <!-- Small timestep, no gravity, fast implicit solver -->
+
+    <visual>
+        <!-- <global realtime="1" /> -->  <!-- Uncomment for real-time rendering -->
+        <quality shadowsize="16384" numslices="28" offsamples="4" />  <!-- High-quality shadow and sampling -->
+        <headlight diffuse="1 1 1" specular="0.5 0.5 0.5" active="1" />  <!-- Enable camera light -->
+        <rgba fog="1 0 0 1" haze="1 1 0 1" />  <!-- Optional visual effects (fog/haze) -->
+    </visual>
+
+    <!-- ===== Asset Definitions ===== -->
+    <asset>
+        <!-- Checkerboard floor texture -->
+        <texture name="plane" type="2d" builtin="checker" rgb1=".1 .1 .1" rgb2=".9 .9 .9"
+                 width="512" height="512" mark="cross" markrgb=".8 .8 .8" />
+        <material name="plane" reflectance="0.3" texture="plane" texrepeat="1 1" texuniform="true" />
+        <mesh name="elliptical_cylinder" file="link1104.stl" />  <!-- Custom 3D mesh for each segment -->
+    </asset>
+
+    <!-- Default joint damping -->
+    <default>
+        <joint damping="0.01" />
+    </default>
+
+    <!-- ===== World and Bodies ===== -->
+    <worldbody>
+
+        <!-- Target marker (visual only, non-colliding) -->
+        <geom name="goal_marker" type="sphere" size="0.02" rgba="1 0 0 1" pos="0 1 0"
+              contype="0" conaffinity="0" group="0" />
+
+        <!-- Ground plane -->
+        <geom name="floor" pos="0 0 -2" size="10 10 .1" type="plane" material="plane" condim="3" />
+
+        <!-- Semi-transparent fluid boundary (blue plane at y=0) -->
+        <geom name="fluid_boundary" type="plane" size="10 10 10" pos="0 0 0"
+              rgba="0 0.5 1 0.3" euler="0 0 0"
+              contype="0" conaffinity="0" group="0" />
+
+        <!-- <light ... /> -->  <!-- Optional directional light setup -->
+
+        <!-- Root of the arm -->
+        <body name="base" pos="0 0 -0.3">
+            <geom name="base" type="sphere" size="0.05" rgba="1 0 0 1" density="1000" />  <!-- Fixed base sphere -->
+
+            <!-- ===== 10-Segment Octopus Arm ===== -->
+            <body name="segment_1" pos="0.05 0 0">
+                <geom name="segment_1" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                      rgba="0 0 1 1" density="1000"
+                      fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                <site name="force_torque1" pos="0 0 -0.05" />  <!-- Sensor site -->
+                <joint name="joint_1" type="hinge" axis="0 1 0" pos="-0.05 0 0" />  <!-- Rotation around Y-axis -->
+
+                <!-- Segment chain definition -->
+                <body name="segment_2" pos="0.15 0 0">
+                    <geom name="segment_2" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                          rgba="0 0 1 1" density="1000"
+                          fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                    <joint name="joint_2" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                    <body name="segment_3" pos="0.15 0 0">
+                        <geom name="segment_3" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                              rgba="0 0 1 1" density="1000"
+                              fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                        <joint name="joint_3" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                        <body name="segment_4" pos="0.15 0 0">
+                            <geom name="segment_4" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                  rgba="0 0 1 1" density="1000"
+                                  fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                            <joint name="joint_4" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                            <body name="segment_5" pos="0.15 0 0">
+                                <geom name="segment_5" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                      rgba="0 0 1 1" density="1000"
+                                      fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                                <joint name="joint_5" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                                <body name="segment_6" pos="0.15 0 0">
+                                    <geom name="segment_6" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                          rgba="0 0 1 1" density="1000"
+                                          fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                                    <joint name="joint_6" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                                    <body name="segment_7" pos="0.15 0 0">
+                                        <geom name="segment_7" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                              rgba="0 0 1 1" density="1000"
+                                              fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                                        <joint name="joint_7" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                                        <body name="segment_8" pos="0.15 0 0">
+                                            <geom name="segment_8" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                                  rgba="0 0 1 1" density="1000"
+                                                  fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                                            <joint name="joint_8" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                                            <body name="segment_9" pos="0.15 0 0">
+                                                <geom name="segment_9" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                                      rgba="0 0 1 1" density="1000"
+                                                      fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                                                <joint name="joint_9" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                                                <body name="segment_10" pos="0.15 0 0">
+                                                    <geom name="segment_10" type="mesh" mesh="elliptical_cylinder" euler="0 0 0"
+                                                          rgba="0 0 1 1" density="1000"
+                                                          fluidshape="ellipsoid" fluidcoef="0.7 0.1 0.5 1.0 1.0" />
+                                                    <joint name="joint_10" type="hinge" axis="0 1 0" pos="0 0 0" />
+
+                                                    <!-- Tip site (used to track end-effector position) -->
+                                                    <site name="tip_site" pos="0.15 0 0" size="0.05" />
+                                                </body>
+
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+
+    </worldbody>
+
+    <!-- ===== Actuators (Motors for Each Joint) ===== -->
+    <actuator>
+        <motor joint="joint_1" name="joint_1" ctrllimited="false" />
+        <motor joint="joint_2" name="joint_2" ctrllimited="false" />
+        <motor joint="joint_3" name="joint_3" ctrllimited="false" />
+        <motor joint="joint_4" name="joint_4" ctrllimited="false" />
+        <motor joint="joint_5" name="joint_5" ctrllimited="false" />
+        <motor joint="joint_6" name="joint_6" ctrllimited="false" />
+        <motor joint="joint_7" name="joint_7" ctrllimited="false" />
+        <motor joint="joint_8" name="joint_8" ctrllimited="false" />
+        <motor joint="joint_9" name="joint_9" ctrllimited="false" />
+        <motor joint="joint_10" name="joint_10" ctrllimited="false" />
+    </actuator>
+
+    <!-- ===== Sensors (Force Measurement at Base) ===== -->
+    <sensor>
+        <!-- <sitepos name="tip_pos" site="tip_site" /> -->  <!-- Can be enabled to log tip position -->
+        <force name="force" site="force_torque1" />  <!-- Force sensor at segment_1 site -->
+        <!-- <torque name="torque" site="force_torque1" /> -->  <!-- Optional torque sensor -->
+    </sensor>
+
+</mujoco>
